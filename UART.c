@@ -3,6 +3,7 @@
 
 
 
+#define USART2 ((struct UARTDevice *)USART2_Base)
 
 
 static char rxbuffer[40];
