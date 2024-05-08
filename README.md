@@ -1,4 +1,4 @@
-i have implemented the UART driver and i  mentioned below How to calculate baudrate also....and This UART DRIVER developed as per 7th chapter in "Programming Embedded Systems in C and C++ by Michael Barr" book
+I have implemented the UART driver and i  mentioned below How to calculate baudrate also....and This UART DRIVER developed as per 7th chapter in "Programming Embedded Systems in C and C++ by Michael Barr" book
 
 Below i mentioned How to calculate the Baudrate for stm32F411RE Board 
 
