@@ -1,6 +1,4 @@
-
-#include"uart.h"
-
+#include"uart2.h"
 
 
 
@@ -9,14 +7,49 @@
 static char rxbuffer[40];
 static char index =0;
 
+volatile unsigned int *AHB1ENR =(unsigned int*)0x40023830;
+volatile unsigned int *APB1ENR =(unsigned int*)0x40023840;
+volatile unsigned int *GPIOMODER =(unsigned int*)0x40020000;
+volatile unsigned int *GPIOAFRL =(unsigned int*)0x40020020;
+
 /* UART Initialization  */
+
+Clock_initialization()
+{
+
+	//Enable clock access for GPIOA
+		*AHB1ENR |= (1<<0);
+		//Enable clock access for USART2
+		*APB1ENR |= (1<<17);
+		//Configure the GPIO Mode register to alt function
+		//set PA2 to ALT FUNC
+		*GPIOMODER &=~(1<<4);
+	    *GPIOMODER |=(1<<5);
+
+	     //set PA3 to ALT FUNC
+	     *GPIOMODER &=~(1<<6);
+	     *GPIOMODER |=(1<<7);
+
+	     //Configure the ALT Function to AFRL For PA2 and PA3
+	          //PA2
+	          *GPIOAFRL|=(1<<8);
+	          *GPIOAFRL |=(1<<9);
+	          *GPIOAFRL |=(1<<10);
+	          *GPIOAFRL &=~(1<<11);
+	          //PA3
+	          *GPIOAFRL|=(1<<12);
+	          *GPIOAFRL |=(1<<13);
+	          *GPIOAFRL |=(1<<14);
+	          *GPIOAFRL &=~(1<<15);
+
+}
 
 void initialize_UART(UARTDriverState* state) {
     // Code to initialize the I2C hardware
 
 	state->UART= (struct UARTDevice*)USART2_Base;
 
-	state->UART->BRR =0x147;
+	state->UART->BRR = ((104 << 4) | 3);
     state->UART->CR1 |= UART_Enable;
     state->UART->CR1 |= TE;
     state->UART->CR1 |= RE;
@@ -26,6 +59,8 @@ void initialize_UART(UARTDriverState* state) {
 
 
 /* UART writing character  */
+
+
 
 void uart_writechar(UARTDriverState* state,char ch)
 {
@@ -87,6 +122,10 @@ void USART2_IRQHandler(UARTDriverState* state)
 			}
 }
 
-
-
-
+void  delay_ms(int v)
+{
+    while(v--)
+    {
+        for(int i = 0; i < 8000; i++);  // Delay loop (assuming ~1ms per iteration)
+    }
+}
